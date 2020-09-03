@@ -2,21 +2,25 @@ package ru.progwards.java1.lessons.basics;
 
 public class AccuracyDoubleFloat {
 
+    final static double PI = 3.14;
+    final static double EARTH_RADIUS = 6_371.2;
+
     public static void main(String[] args) {
-        System.out.println(calculateAccuracy(6371.2));
+        System.out.println("The volume, if the radius is equal to 1 in type DOUBLE is " + volumeBallDouble(1));
+        System.out.println("The volume, if the radius is equal to 1 in type FLOAT is " + volumeBallFloat(1));
+        System.out.println("The volume of planet Earth in type DOUBLE is " + volumeBallDouble(EARTH_RADIUS));
+        System.out.println("The volume of planet Earth in type FLOAT is " + volumeBallFloat((float)EARTH_RADIUS));
+        System.out.println("Calculation accuracy is " + calculateAccuracy(EARTH_RADIUS));
     }
     public static double volumeBallDouble(double radius) {
-        final double PI = 3.14;
-        return 4/3 * PI * Math.pow(radius,3);
+       return PI * Math.pow(radius,3) * 4 / 3;
     }
 
     public static float volumeBallFloat(float radius) {
-        final float PI = 3.14F;
-        return (float) (4/3 * PI * Math.pow(radius,3));
+        return (float) (PI * Math.pow(radius,3) * 4 / 3);
     }
 
     public static double calculateAccuracy(double radius) {
-        final double R = radius;
-        return volumeBallDouble(R) - volumeBallFloat((float) R);
+        return volumeBallDouble(radius) - volumeBallFloat((float) radius);
     }
 }
