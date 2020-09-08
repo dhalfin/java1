@@ -39,7 +39,7 @@ public class CyclesGoldenFibo {
 
         System.out.println("\nGolden triangles with the lengths of the base and edges are: ");
         for (int a = 1; a <= 100; a++)
-            for (int c = 1; c <= 100; c++)
+            for (int c = a; c <= 100; c++)
                 if (isGoldenTriangle(a, c, c))
                     System.out.println(a + ", " + c + ", " + c);
     }
