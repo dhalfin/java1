@@ -37,6 +37,4 @@ public class ComplexNum {
         bNewOne = (b * num.a - a * num.b) / (num.a * num.a + num.b * num.b);
         return new ComplexNum(aNewOne, bNewOne);
     }
-
-
 }
