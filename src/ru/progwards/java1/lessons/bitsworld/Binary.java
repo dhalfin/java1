@@ -8,12 +8,13 @@ public class Binary {
     }
 
     public String toString() {
-        int n = num & 0x7F_FF_FF_FF;
-        String result = num < 0 ? "1" : "0";
-        for (int i = 1; i < 8; i++) {
-            result += (n & 0x40_00_00_00) == 0x40_00_00_00 ? "1" : "0";
-            n <<= 1;
+        String res = "";
+
+        for (int i = 0; i < 8; i++) {
+            int resInt = num & 0b1;
+            res = resInt + res;
+            num >>= 1;
         }
-        return result;
+        return res;
     }
 }
