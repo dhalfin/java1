@@ -6,30 +6,6 @@ import java.util.Set;
 
 public class ProductAnalytics {
 
-    class Shop {
-        private List<Product> products;
-
-        public Shop(List<Product> products) {
-            this.products = products;
-        }
-
-        public List<Product> getProducts() {
-            return products;
-        }
-    }
-
-    class Product {
-        private String code;
-
-        public Product(String code) {
-            this.code = code;
-        }
-
-        public String getCode() {
-            return code;
-        }
-    }
-
     private List<Shop> shops;
     private List<Product> products;
 
