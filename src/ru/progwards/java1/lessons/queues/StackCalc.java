@@ -1,11 +1,11 @@
 package ru.progwards.java1.lessons.queues;
 
 import java.util.ArrayDeque;
-import java.util.Deque;
+
 
 public class StackCalc {
 
-    static Deque<Double> stack = new ArrayDeque<>();
+    ArrayDeque<Double> stack = new ArrayDeque<>();
 
     public void push(double value) {
         stack.push(value);
@@ -16,14 +16,14 @@ public class StackCalc {
     }
 
     public void add() {
-        //Double val = pop() + pop();
-        push(pop() + pop());
+        Double val = pop() + pop();
+        push(val);
     }
 
     public void sub() {
-//        Double firstVal = pop();
-//        Double secondVal = pop();
-        push(pop() - pop());
+       Double firstVal = pop();
+       Double secondVal = pop();
+       push(secondVal - firstVal);
     }
 
     public void mul() {
@@ -31,6 +31,8 @@ public class StackCalc {
     }
 
     public void div() {
-        push(pop() / pop());
+        Double firstVal = pop();
+        Double secondVal = pop();
+        push(secondVal / firstVal);
     }
 }

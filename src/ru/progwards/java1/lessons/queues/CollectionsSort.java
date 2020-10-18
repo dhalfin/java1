@@ -3,8 +3,6 @@ package ru.progwards.java1.lessons.queues;
 import java.util.*;
 
 public class CollectionsSort {
-    //static final int ELEM_COUNT = 5_000_000;
-
     public static void mySort(Collection<Integer> data) {
         List<Integer> list = new ArrayList<>(data);
 
@@ -30,43 +28,43 @@ public class CollectionsSort {
 
     static void collSort(Collection<Integer> data) {
         ArrayList<Integer> list = new ArrayList<>(data);
-        Collections.sort(list);
+        Collections.sort((List) list);
+    }
+
+    public static Collection<Integer> createList() {
+        Random rnd = new Random();
+        List<Integer> list = new ArrayList<>();
+        for (int i = 10_000; i >= 0; i--) {
+            list.add(rnd.nextInt());
+        }
+        return list;
+    }
+
+    public static Collection<String> getListNamesMethods(Collection<Sorted> data) {
+        List<String> listNameMethod = new ArrayList<>();
+        for (int i = 0; i < data.size(); i++) {
+            listNameMethod.add(((ArrayList<Sorted>) data).get(i).name);
+        }
+        return listNameMethod;
     }
 
     public static Collection<String> compareSort() {
-        TreeSet<Sorted> sortedMethods = new TreeSet<>();
-//        Random rnd = new Random();
-//        List<Integer> list = new ArrayList<Integer>();
-//        for (int i = 0; i < ELEM_COUNT; i++) {
-//            list.add(rnd.nextInt());
-//        }
+        long start = System.currentTimeMillis();
+        mySort(createList());
+        long end1 = System.currentTimeMillis() - start;
 
-        Collection<Integer> list = new ArrayList<Integer>();
-        for (int i = 0; i < 10_000; i++) {
-            list.add(i);
-        }
+        minSort(createList());
+        long end2 = System.currentTimeMillis() - start;
 
-        long timeMySort = System.currentTimeMillis();
-        mySort(list);
-        timeMySort = System.currentTimeMillis() - timeMySort;
-        sortedMethods.add(new Sorted("mySort", timeMySort));
+        collSort(createList());
+        long end3 = System.currentTimeMillis() - start;
 
-        long timeMinSort = System.currentTimeMillis();
-        minSort(list);
-        timeMinSort = System.currentTimeMillis() - timeMinSort;
-        sortedMethods.add(new Sorted("minSort", timeMinSort));
-
-        long timeCollSort = System.currentTimeMillis();
-        collSort(list);
-        timeCollSort = System.currentTimeMillis() - timeCollSort;
-        sortedMethods.add(new Sorted("collSort", timeCollSort));
-
-        ArrayList<String> result = new ArrayList(sortedMethods);
-
-        System.out.println("myTime = " + timeMySort);
-        System.out.println("MinTime = " + timeMinSort);
-        System.out.println("CollSort = " + timeCollSort);
-        return result;
+        List<Sorted> listMethod = new ArrayList<>(List.of(
+                new Sorted("mySort", end1),
+                new Sorted("minSort", end2),
+                new Sorted("collSort", end3)));
+        Collections.sort(listMethod);
+        return getListNamesMethods(listMethod);
     }
 
     public static class Sorted implements Comparable<Sorted> {
@@ -80,10 +78,10 @@ public class CollectionsSort {
 
         @Override
         public int compareTo(Sorted o) {
-            if (this.time == o.time) {
-                return this.name.compareTo(o.name);
-            }
-            return Long.compare(this.time, o.time);
+            int compareOutput = Long.compare(time, o.time);
+            if (compareOutput != 0)
+                return compareOutput;
+            return name.compareTo(o.name);
         }
     }
 

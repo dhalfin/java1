@@ -14,25 +14,26 @@ public class Calculate {
     }
 
     public static double calculation2() {
+        stack.push(87);
+        stack.push(2);
         stack.push(13.001);
         stack.push(9.2);
         stack.sub();
-        stack.push(2);
         stack.mul();
-        stack.push(87);
         stack.add();
         stack.push(19);
         stack.push(3.33);
         stack.sub();
         stack.mul();
-        stack.push(24);
+
         stack.push(737.22);
+        stack.push(24);
         stack.add();
         stack.push(55.6);
         stack.push(12.1);
         stack.sub();
         stack.div();
         stack.add();
-        return stack.pop();
+        return (stack.pop());
     }
 }
