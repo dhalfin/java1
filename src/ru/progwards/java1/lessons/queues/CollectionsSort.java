@@ -28,7 +28,9 @@ public class CollectionsSort {
 
     static void collSort(Collection<Integer> data) {
         ArrayList<Integer> list = new ArrayList<>(data);
-        Collections.sort((List) list);
+        Collections.sort(list);
+        data.clear();
+        data.addAll(list);
     }
 
     public static Collection<Integer> createList() {
@@ -53,9 +55,11 @@ public class CollectionsSort {
         mySort(createList());
         long end1 = System.currentTimeMillis() - start;
 
+        start = System.currentTimeMillis();
         minSort(createList());
         long end2 = System.currentTimeMillis() - start;
 
+        start = System.currentTimeMillis();
         collSort(createList());
         long end3 = System.currentTimeMillis() - start;
 
