@@ -7,85 +7,54 @@ import java.util.*;
 
 public class SalesInfo {
 
-    ArrayList<String[]> arrList = new ArrayList<>();
-    static Map<Integer, Purchase> ordersMap = new TreeMap<>();
+    private static Map<String, Double> goodsList;
+    private static Map<String, AbstractMap.SimpleEntry<Double, Integer>> customersList;
 
-    private static class Purchase {
-        private String name;
-        private String item;
-        private int quantity;
-        private double sum;
-
-        Purchase(String name, String item, int quantity, double sum) {
-            this.name = name;
-            this.item = item;
-            this.quantity = quantity;
-            this.sum = sum;
-        }
-
-    }
-
-    public int loadOrders(String fileName) {
-        try (FileReader reader = new FileReader(fileName)) {
-            int cnt = 0;
-            Scanner sc = new Scanner(reader);
-            while (sc.hasNextLine()) {
-                String str = sc.nextLine();
-                str = str.replace(", ", ",");
-                String[] strArray = str.split(",");
-                if (strArray.length == 4 &&
-                        isDigit(strArray[2]) &&
-                        isDigit(strArray[3])) {
-                    cnt++;
-                    ordersMap.put(cnt, new Purchase(strArray[0], strArray[1],
-                            Integer.valueOf(strArray[2]), Double.valueOf(strArray[3])));
-                }
+    public static int loadOrders(String fileName) {
+        goodsList = new TreeMap<String, Double>();
+        customersList = new TreeMap<String, AbstractMap.SimpleEntry<Double, Integer>>();
+        int output = 0;
+        try (FileReader r = new FileReader(fileName); Scanner sc = new Scanner(r)) {
+            while (sc.hasNext()) {
+                output += handleEntry(sc.nextLine());
             }
-            return cnt;
         } catch (IOException e) {
-            System.out.println(e);
-            return 0;
+            throw new RuntimeException(fileName + ":\n" + e.getMessage());
         }
+        return output;
     }
 
-    public Map<String, Double> getGoods() {
-        Map<String, Double> goodsList = new TreeMap<>();
-        for (int i = 0; i < arrList.size(); i++) {
-            String[] str = arrList.get(i);
-            if (goodsList.containsKey(arrList.get(i)[1])) {
-                goodsList.put(str[1], goodsList.get(str[1]) + Double.parseDouble(str[3]));
+
+    private static int handleEntry(String str) {
+        String[] entries = str.split(",");
+        if (entries.length == 4) {
+            try {
+                String name = entries[0].trim();
+                String item = entries[1].trim();
+                int cnt = Integer.parseInt(entries[2].trim());
+                double sum = Double.parseDouble(entries[3].trim());
+                goodsList.put(item, goodsList.containsKey(item) ? goodsList.get(item) + sum : sum);
+                if (customersList.containsKey(name)) {
+                    AbstractMap.SimpleEntry<Double, Integer> interimList = customersList.get(name);
+                    sum += interimList.getKey();
+                    cnt += interimList.getValue();
+                }
+                customersList.put(name, new AbstractMap.SimpleEntry<Double, Integer>(sum, cnt));
+                return 1;
+            } catch (Exception e) {
+                System.out.println(e);
             }
-            goodsList.putIfAbsent(str[1], Double.parseDouble(str[3]));
         }
+        return 0;
+    }
+
+    public static Map<String, Double> getGoods() {
         return goodsList;
     }
 
-    public Map<String, AbstractMap.SimpleEntry<Double, Integer>> getCustomers() {
-        Map<String, AbstractMap.SimpleEntry<Double, Integer>> customersList = new TreeMap<>();
-        for (int i = 0; i < arrList.size(); i++) {
-            String[] str = arrList.get(i);
-            if (customersList.containsKey(str[0])) {
-                AbstractMap.SimpleEntry simpleEntry = customersList.get(str[0]);
-                customersList.put(str[0], new AbstractMap.SimpleEntry<Double, Integer>((double) simpleEntry.getKey()
-                        + Double.parseDouble(str[3]), ((int) simpleEntry.getValue() + Integer.parseInt(str[2]))));
-            }
-            customersList.putIfAbsent(str[0], new AbstractMap.SimpleEntry<>(Double.parseDouble(str[3]),
-                    Integer.parseInt(str[2])));
-        }
+    public static Map<String, AbstractMap.SimpleEntry<Double, Integer>> getCustomers() {
         return customersList;
     }
 
-    private boolean isDigit(String str) {
-        StringBuilder newStr = new StringBuilder();
-        for (char ch : str.toCharArray()) {
-            if (!Character.isAlphabetic(ch)) {
-                newStr.append(ch);
-            }
-        }
-        return str.length() == newStr.length();
-    }
 
 }
-
-
-

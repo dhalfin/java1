@@ -1,55 +1,58 @@
 package ru.progwards.java1.lessons.maps;
 
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.*;
 
 public class UsageFrequency {
-
-    private ArrayList<String> words = new ArrayList<>();
-    Map<String, Integer> getWords = new TreeMap<>();
-
-    String str = "";
+    private String file;
 
     public void processFile(String fileName) {
-        try (FileReader fr = new FileReader(fileName)) {
-            try (Scanner sc = new Scanner(fr)) {
-                while (sc.hasNextLine()) {
-                    str += sc.nextLine() + " ";
-                }
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
+        try (FileReader reader = new FileReader(fileName)) {
+            StringBuilder sb = new StringBuilder();
+            while (reader.ready()) {
+                sb.append((char)reader.read());
             }
-        } catch (Exception e) {
+            file = sb.toString();
+        } catch (IOException e) {
             System.out.println(e.getMessage());
         }
     }
 
     public Map<Character, Integer> getLetters() {
-        Map<Character, Integer> letterMeter = new HashMap<>();
-        for (String str : words) {
-            for (char a : str.toCharArray()) {
-                if (letterMeter.containsKey(a)) {
-                    int cnt = letterMeter.get(a);
-                    letterMeter.put(a, cnt + 1);
-                } else {
-                    letterMeter.put(a, 1);
-                }
+        char[] charsArray = getFilterString(file).toCharArray();
+        Map<Character, Integer> treeMap = new HashMap<>();
+        for (int i = 0; i < charsArray.length; i++) {
+            if (treeMap.containsKey(charsArray[i])) {
+                int quantity = treeMap.get(charsArray[i]) + 1;
+                treeMap.put(charsArray[i], quantity);
             }
+            treeMap.putIfAbsent(charsArray[i], 1);
         }
-        return letterMeter;
+        return treeMap;
     }
 
     public Map<String, Integer> getWords() {
-        for (String word : str.split("[^a-zA-Z_а-яА-Я_0-9]")) {
-            word = word.trim();
-            if (getWords.containsKey(word)) {
-                getWords.replace(word, getWords.get(word) + 1);
-                continue;
+        String[] strArray = file.split("[^0-9a-zA-Zа-яА-Я]+");
+        Map<String, Integer> treeMap = new HashMap<>();
+        for (int i = 1; i < strArray.length; i++) {
+            if (treeMap.containsKey(strArray[i])) {
+                int quantity = treeMap.get(strArray[i]) + 1;
+                treeMap.put(strArray[i], quantity);
             }
-            getWords.put(word, 1);
+            treeMap.putIfAbsent(strArray[i], 1);
         }
-        getWords.remove("");
-        return getWords;
+        return treeMap;
+    }
+
+
+    private String getFilterString(String str) {
+        StringBuilder sb = new StringBuilder();
+        for (char ch : str.toCharArray()) {
+            if (Character.isAlphabetic(ch) || Character.isDigit(ch))
+                sb.append(ch);
+        }
+        return sb.toString();
     }
 
     public static void main(String[] args) {
