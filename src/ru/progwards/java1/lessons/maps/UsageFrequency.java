@@ -1,14 +1,11 @@
 package ru.progwards.java1.lessons.maps;
 
 import java.io.FileReader;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
-import java.util.TreeMap;
+import java.util.*;
 
 public class UsageFrequency {
 
-    Map<Character, Integer> getLetters = new HashMap<>();
+    private ArrayList<String> words = new ArrayList<>();
     Map<String, Integer> getWords = new TreeMap<>();
 
     String str = "";
@@ -28,17 +25,18 @@ public class UsageFrequency {
     }
 
     public Map<Character, Integer> getLetters() {
-        char[] characters = str.toCharArray();
-        for (char ch : characters) {
-            if (Character.isLetterOrDigit(ch)) {
-                if (getLetters.containsKey(ch)) {
-                    getLetters.replace(ch, getLetters().get(ch) + 1);
-                    continue;
+        Map<Character, Integer> letterMeter = new HashMap<>();
+        for (String str : words) {
+            for (char a : str.toCharArray()) {
+                if (letterMeter.containsKey(a)) {
+                    int cnt = letterMeter.get(a);
+                    letterMeter.put(a, cnt + 1);
+                } else {
+                    letterMeter.put(a, 1);
                 }
-                getLetters.put(ch, 1);
             }
         }
-        return getLetters;
+        return letterMeter;
     }
 
     public Map<String, Integer> getWords() {
@@ -48,7 +46,7 @@ public class UsageFrequency {
                 getWords.replace(word, getWords.get(word) + 1);
                 continue;
             }
-            getWords.put(word,1);
+            getWords.put(word, 1);
         }
         getWords.remove("");
         return getWords;
@@ -57,7 +55,7 @@ public class UsageFrequency {
     public static void main(String[] args) {
         UsageFrequency uf = new UsageFrequency();
         uf.processFile("D:/Progwards/Academy/Lessons/src/ru/progwards/java1/lessons/maps/wiki.train.tokens");
-        for (var entry : uf.getWords().entrySet()){
+        for (var entry : uf.getWords().entrySet()) {
             System.out.println(entry);
         }
 

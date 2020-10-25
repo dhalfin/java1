@@ -7,6 +7,7 @@ import java.util.*;
 
 public class SalesInfo {
 
+    ArrayList<String[]> arrList = new ArrayList<>();
     static Map<Integer, Purchase> ordersMap = new TreeMap<>();
 
     private static class Purchase {
@@ -22,21 +23,6 @@ public class SalesInfo {
             this.sum = sum;
         }
 
-        public String getName() {
-            return name;
-        }
-
-        public String getItem() {
-            return item;
-        }
-
-        public int getQuantity() {
-            return quantity;
-        }
-
-        public double getSum() {
-            return sum;
-        }
     }
 
     public int loadOrders(String fileName) {
@@ -63,31 +49,30 @@ public class SalesInfo {
     }
 
     public Map<String, Double> getGoods() {
-        Map<String, Double> treeMap = new TreeMap<>();
-        for (Map.Entry<Integer, Purchase> entry : ordersMap.entrySet()) {
-            String goods = entry.getValue().getItem();
-            double sum = entry.getValue().getSum();
-            if (treeMap.containsKey(goods)) {
-                sum += treeMap.get(goods);
+        Map<String, Double> goodsList = new TreeMap<>();
+        for (int i = 0; i < arrList.size(); i++) {
+            String[] str = arrList.get(i);
+            if (goodsList.containsKey(arrList.get(i)[1])) {
+                goodsList.put(str[1], goodsList.get(str[1]) + Double.parseDouble(str[3]));
             }
-            treeMap.put(goods, sum);
+            goodsList.putIfAbsent(str[1], Double.parseDouble(str[3]));
         }
-        return treeMap;
+        return goodsList;
     }
 
     public Map<String, AbstractMap.SimpleEntry<Double, Integer>> getCustomers() {
-        Map<String, AbstractMap.SimpleEntry<Double, Integer>> treeMap = new TreeMap<>();
-        for (Map.Entry<Integer, Purchase> entry : ordersMap.entrySet()) {
-            String name = entry.getValue().getName();
-            double sum = entry.getValue().getSum();
-            int quantity = entry.getValue().getQuantity();
-            if (treeMap.containsKey(name)) {
-                sum += treeMap.get(name).getKey();
-                quantity += treeMap.get(name).getValue();
+        Map<String, AbstractMap.SimpleEntry<Double, Integer>> customersList = new TreeMap<>();
+        for (int i = 0; i < arrList.size(); i++) {
+            String[] str = arrList.get(i);
+            if (customersList.containsKey(str[0])) {
+                AbstractMap.SimpleEntry simpleEntry = customersList.get(str[0]);
+                customersList.put(str[0], new AbstractMap.SimpleEntry<Double, Integer>((double) simpleEntry.getKey()
+                        + Double.parseDouble(str[3]), ((int) simpleEntry.getValue() + Integer.parseInt(str[2]))));
             }
-            treeMap.put(name, new AbstractMap.SimpleEntry<>(sum, quantity));
+            customersList.putIfAbsent(str[0], new AbstractMap.SimpleEntry<>(Double.parseDouble(str[3]),
+                    Integer.parseInt(str[2])));
         }
-        return treeMap;
+        return customersList;
     }
 
     private boolean isDigit(String str) {
