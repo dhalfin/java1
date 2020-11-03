@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 
 public class FilesSelect {
 
-    // поиск ключевиков во всех файлах каталога, копирование в папки с названиями ключевиков
     public static void selectFiles(String inFolder, String outFolder, List<String> keys) {
         List<Path> paths = null;
         try {
@@ -29,7 +28,6 @@ public class FilesSelect {
             }
     }
 
-    // найти ключевую последовательность символов в файле
     private static String findKey(Path path, List<String> keys) {
         Charset charset = Charset.forName("UTF-8");
         try (BufferedReader reader = Files.newBufferedReader(path, charset)) {
@@ -47,7 +45,6 @@ public class FilesSelect {
         return null;
     }
 
-    // скопировать файл в подкаталог
     private static void copyFile(Path path, String outFolder, String subFolder) {
         Path destPath = Paths.get(outFolder + "/" + subFolder);
         Path dest = Paths.get(outFolder + "/" + subFolder + "/" + path.getFileName());
@@ -59,8 +56,5 @@ public class FilesSelect {
         }
     }
 
-    public static void main(String[] args) {
-        selectFiles(".", "out", Arrays.asList("qwe", "File", "Sea"));
-    }
 
 }

@@ -34,7 +34,7 @@ public class FindDuplicates {
         return fileList;
     }
 
-    private boolean fullFilter(Path file1, Path file2) {
+    private boolean fileChecker(Path file1, Path file2) {
         try {
             if (Files.getAttribute(file1, "lastModifiedTime")
                     .equals(Files.getAttribute(file2, "lastModifiedTime"))
@@ -52,17 +52,18 @@ public class FindDuplicates {
 
     public List<List<String>> findDuplicates(String startPath) {
         List<List<String>> result = new ArrayList<>();
-        List<Path> tmpFileList = fileList(startPath);
+        List<Path> transientList = fileList(startPath);
 
-        for (int i = 0; i < tmpFileList.size(); i++) {
-            Path file1 = tmpFileList.get(i);
+        for (int i = 0; i < transientList.size(); i++) {
+            Path firstFile = transientList.get(i);
             List<String> filePathList = new ArrayList<>();
-            for (int f = i + 1; f < tmpFileList.size(); f++) {
-                Path file2 = tmpFileList.get(f);
-                if (file1.getFileName().compareTo(file2.getFileName()) == 0 && fullFilter(file1, file2)) {
-                    filePathList.add(file1.toString());
-                    filePathList.add(file2.toString());
-                    tmpFileList.remove(f);
+            for (int j = i + 1; j < transientList.size(); j++) {
+                Path secondFile = transientList.get(j);
+                if (firstFile.getFileName().compareTo(secondFile.getFileName()) == 0
+                        && fileChecker(firstFile, secondFile)) {
+                    filePathList.add(firstFile.toString());
+                    filePathList.add(secondFile.toString());
+                    transientList.remove(j);
                 }
             }
             if (filePathList.size() != 0) {
