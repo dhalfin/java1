@@ -174,36 +174,5 @@ public class OrderProcessor {
     }
 }
 
-class Order {
-    public String shopId = "";
-    public String orderId = "";
-    public String customerId = "";
-    public LocalDateTime datetime;
-    public List<OrderItem> items;
-    public double sum = 0;
 
 
-    public Order(Path fileOrder, List<OrderItem> orderItemList) throws IOException {
-        this.shopId = fileOrder.getFileName().toString().substring(0, 3);
-        this.orderId = fileOrder.getFileName().toString().substring(5, 10);
-        this.customerId = fileOrder.getFileName().toString().substring(12, 16);
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'");
-        this.datetime = LocalDateTime.from(dtf.parse(Files.getAttribute(fileOrder, "lastModifiedTime").toString()));
-        this.items = orderItemList;
-        for (OrderItem item : items) {
-            this.sum += item.count * item.price;
-        }
-    }
-}
-
-class OrderItem {
-    public String googsName = "";
-    public int count = 0;
-    public double price = 0;
-
-    public OrderItem(String[] itemOfOrder) {
-        this.googsName = itemOfOrder[0].trim();
-        this.count = Integer.parseInt(itemOfOrder[1].trim());
-        this.price = Integer.parseInt(itemOfOrder[2].trim());
-    }
-}
