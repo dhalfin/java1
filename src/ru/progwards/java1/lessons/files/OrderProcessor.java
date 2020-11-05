@@ -175,10 +175,10 @@ public class OrderProcessor {
     public static void main(String[] args) {
         OrderProcessor op = new OrderProcessor("D:\\Progwards\\Academy\\Lessons\\src\\ru\\progwards\\java1\\lessons\\files\\Order");
         op.loadOrders(LocalDate.now(ZoneId.systemDefault()).minusMonths(1), LocalDate.now(ZoneId.systemDefault()).plusMonths(1), "S_01");
-        for (Order order : op.orderList){
-            System.out.println(order.shopId + " " + order.datetime.toString()+ " " + order.sum);
-            for (OrderItem item : order.items){
-                System.out.println(item.googsName+ " " + item.price+ " " + item.count);
+        for (Order order : op.orderList) {
+            System.out.println(order.shopId + " " + order.datetime.toString() + " " + order.sum);
+            for (OrderItem item : order.items) {
+                System.out.println(item.googsName + " " + item.price + " " + item.count);
             }
         }
         Map map = op.statisticsByGoods();
