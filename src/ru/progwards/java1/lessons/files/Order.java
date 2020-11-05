@@ -15,6 +15,8 @@ public class Order {
     public List<OrderItem> items;
     public double sum = 0;
 
+    public Order() {
+    }
 
     public Order(Path fileOrder, List<OrderItem> orderItemList) throws IOException {
         this.shopId = fileOrder.getFileName().toString().substring(0, 3);

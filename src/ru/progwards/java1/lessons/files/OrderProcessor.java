@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 
@@ -40,7 +41,7 @@ public class OrderProcessor {
     }
 
     private boolean checkOrderDate(LocalDate start, LocalDate finish, String shopId, Path path) throws IOException {
-        //DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'");
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'");
         fileDate = Instant.parse(Files.getAttribute(path, "lastModifiedTime").toString());
         String str = "glob:**/???-??????-????.csv";
         if (shopId != null) {
