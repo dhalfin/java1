@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.time.*;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 
@@ -171,6 +170,22 @@ public class OrderProcessor {
             salesByDay.putIfAbsent(LocalDate.from(order.datetime), order.sum);
         }
         return salesByDay;
+    }
+
+    public static void main(String[] args) {
+        OrderProcessor op = new OrderProcessor("D:\\Progwards\\Academy\\Lessons\\src\\ru\\progwards\\java1\\lessons\\files\\Order");
+        op.loadOrders(LocalDate.now(ZoneId.systemDefault()).minusMonths(1), LocalDate.now(ZoneId.systemDefault()).plusMonths(1), "S_01");
+        for (Order order : op.orderList){
+            System.out.println(order.shopId + " " + order.datetime.toString()+ " " + order.sum);
+            for (OrderItem item : order.items){
+                System.out.println(item.googsName+ " " + item.price+ " " + item.count);
+            }
+        }
+        Map map = op.statisticsByGoods();
+        for (var entry : map.entrySet()) {
+            System.out.println(entry.toString());
+        }
+
     }
 }
 
