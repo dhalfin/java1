@@ -26,7 +26,7 @@ public class OrderProcessor {
                 public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) {
                     if (pathMatcher.matches(path)) {
                         if (isValidNameFile(path.getFileName().toString())) {
-                            addToSetOfOrders(path, start, finish, shopId);
+                            addSetOfOrders(path, start, finish, shopId);
                         }
                     }
                     return FileVisitResult.CONTINUE;
@@ -104,7 +104,7 @@ public class OrderProcessor {
         return map;
     }
 
-    public void addToSetOfOrders(Path path, LocalDate start, LocalDate finish, String shopId) {
+    public void addSetOfOrders(Path path, LocalDate start, LocalDate finish, String shopId) {
         try {
             String content = Files.readString(path);
             boolean notContainsError = !content.contains("Error");
