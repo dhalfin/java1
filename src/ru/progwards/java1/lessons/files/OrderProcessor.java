@@ -3,195 +3,255 @@ package ru.progwards.java1.lessons.files;
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.FileTime;
 import java.time.*;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-
 public class OrderProcessor {
-    public String startPath;
-    List<OrderItem> orderItemList;
-    List<Order> orderList = new ArrayList<>();
-    public int failedFile = 0;
-    Instant fileDate;
+    private Path catalog;
+    private int amountOfFilesWithErr;
+    private Set<Order> setOfOrders;
 
     public OrderProcessor(String startPath) {
-        this.startPath = startPath;
+        catalog = Paths.get(startPath);
+        amountOfFilesWithErr = 0;
+        setOfOrders = new HashSet<>();
     }
 
     public int loadOrders(LocalDate start, LocalDate finish, String shopId) {
-
+        PathMatcher pathMatcher = FileSystems.getDefault().getPathMatcher("glob:**/*.csv");
         try {
-            Files.walkFileTree(Paths.get(startPath), new SimpleFileVisitor<Path>() {
+            Files.walkFileTree(catalog, new SimpleFileVisitor<>() {
                 @Override
-                public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) throws IOException {
-                    OrderList(start, finish, shopId, path);
+                public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) {
+                    if (pathMatcher.matches(path)) {
+                        if (isValidNameFile(path.getFileName().toString())) {
+                            addToSetOfOrders(path, start, finish, shopId);
+                        }
+                    }
                     return FileVisitResult.CONTINUE;
                 }
 
                 @Override
-                public FileVisitResult visitFileFailed(Path file, IOException exc) {
+                public FileVisitResult visitFileFailed(Path path, IOException e) {
                     return FileVisitResult.CONTINUE;
                 }
             });
-        } catch (IOException | NullPointerException e) {
-            e.printStackTrace();
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
         }
-        return failedFile;
-    }
-
-    private boolean checkOrderDate(LocalDate start, LocalDate finish, String shopId, Path path) throws IOException {
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'");
-        fileDate = Instant.parse(Files.getAttribute(path, "lastModifiedTime").toString());
-        String str = "glob:**/???-??????-????.csv";
-        if (shopId != null) {
-            str = "glob:**/" + shopId + "-??????-????.csv";
-        }
-        PathMatcher pm = FileSystems.getDefault().getPathMatcher(str);
-        if (pm.matches(path)) {
-            if (start == null && fileDate.isBefore(
-                    Instant.from(ZonedDateTime.of(finish, LocalTime.of(
-                            23, 59, 59, 000000),
-                            ZoneId.systemDefault())))) {
-                return true;
-            }
-            if (finish == null && fileDate.isAfter(
-                    Instant.from(ZonedDateTime.of(start, LocalTime.of(
-                            0, 0, 0, 000000),
-                            ZoneId.systemDefault())))) {
-                return true;
-            }
-            if (fileDate.isAfter(Instant.from(ZonedDateTime.of(
-                    start, LocalTime.of(0, 0, 0, 000000),
-                    ZoneId.systemDefault()))) && fileDate.isBefore(Instant.from(ZonedDateTime.of(finish, LocalTime.of(
-                    23, 59, 59, 000000), ZoneId.systemDefault())))) {
-                return true;
-            }
-        }
-        failedFile++;
-        return false;
-    }
-
-    private List<Order> OrderList(LocalDate start, LocalDate finish, String shopId, Path pathOrderFile) throws IOException {
-        if (checkOrderDate(start, finish, shopId, pathOrderFile)) {
-            orderItemList = new ArrayList<>();
-            List<String> good = new ArrayList<>(sortGoods(Files.readAllLines(pathOrderFile)));
-            for (String str : good) {
-                String[] itemOfOrder = str.split(",");
-                orderItemList.add(new OrderItem(itemOfOrder));
-            }
-            orderList.add(new Order(pathOrderFile, orderItemList));
-        }
-        return orderList;
-    }
-
-    public List<String> sortGoods(List<String> goodsList) {
-        ArrayList<String> goodsArrList = new ArrayList<>(goodsList);
-        String str1;
-        String str2;
-        for (int j = 0; j < goodsArrList.size(); j++) {
-            for (int i = j + 1; i < goodsArrList.size(); i++) {
-                if (goodsArrList.get(j).compareTo(goodsArrList.get(i)) > 0) {
-                    str1 = goodsArrList.get(j);
-                    str2 = goodsArrList.get(i);
-                    goodsArrList.remove(j);
-                    goodsArrList.add(j, str2);
-                    goodsArrList.remove(i);
-                    goodsArrList.add(i, str1);
-                }
-            }
-        }
-        return goodsArrList;
-    }
-
-    public List<Order> sortOrders(List<Order> ordersToSort) {
-        ArrayList<Order> ordersArrayList = new ArrayList<>();
-        Order order;
-        for (int j = 0; j < ordersToSort.size(); j++) {
-            for (int i = j + 1; i < ordersToSort.size(); i++) {
-                if (ordersToSort.get(j).datetime.isAfter((ordersToSort.get(i).datetime))) {
-                    order = ordersToSort.get(j);
-                    ordersToSort.add(j, ordersToSort.get(i));
-                    ordersToSort.add(i, order);
-                }
-            }
-        }
-        return ordersToSort;
+        return amountOfFilesWithErr;
     }
 
     public List<Order> process(String shopId) {
-        List<Order> ordersToSort = new ArrayList<>();
-        try {
-            for (Order order : orderList) {
-                if (shopId != null && order.shopId == shopId) {
-                    ordersToSort.add(order);
-                    continue;
-                }
-                if (shopId != null && order.shopId != shopId) {
-                    continue;
-                }
-                ordersToSort.add(order);
-            }
-        } catch (NullPointerException e) {
-            e.printStackTrace();
+        List<Order> orderList = new ArrayList<>();
+        for (Order order : setOfOrders) {
+            if (shopId == null)
+                orderList.add(order);
+            else if (order.shopId.equals(shopId))
+                orderList.add(order);
         }
-        return sortOrders(ordersToSort);
+
+        Comparator<Order> comparator = new Comparator<Order>() {
+            @Override
+            public int compare(Order o1, Order o2) {
+                return o1.datetime.compareTo(o2.datetime);
+            }
+        };
+
+        orderList.sort(comparator);
+        return orderList;
     }
 
     public Map<String, Double> statisticsByShop() {
-        Map<String, Double> mapSales = new TreeMap<>();
-        for (Order order : orderList) {
-            if (mapSales.containsKey(order.shopId)) {
-                mapSales.put(order.shopId, mapSales.get(order.shopId) + order.sum);
-                continue;
+        Map<String, Double> map = new TreeMap<>();
+        for (Order order : setOfOrders) {
+            if (map.containsKey(order.shopId)) {
+                double sumByShop = map.get(order.shopId) + order.sum;
+                map.put(order.shopId, sumByShop);
             }
-            mapSales.putIfAbsent(order.shopId, order.sum);
+            map.putIfAbsent(order.shopId, order.sum);
         }
-        return mapSales;
+        return map;
     }
 
     public Map<String, Double> statisticsByGoods() {
-        Map<String, Double> mapGoods = new TreeMap<>();
-        for (Order order : orderList) {
-            for (OrderItem item : order.items) {
-                if (mapGoods.containsKey(item.googsName)) {
-                    mapGoods.put(item.googsName, mapGoods.get(item.googsName) + item.count * item.price);
-                    System.out.println(item.googsName + "   " + item.count * item.price);
-                    continue;
+        Map<String, Double> map = new TreeMap<>();
+        for (Order order : setOfOrders) {
+            for (int i = 0; i < order.items.size(); i++) {
+                String productName = order.items.get(i).googsName;
+                double sumByGoods = order.items.get(i).price * order.items.get(i).count;
+                if (map.containsKey(productName)) {
+                    double newSumBuy = map.get(productName) + sumByGoods;
+                    map.put(productName, newSumBuy);
                 }
-                mapGoods.putIfAbsent(item.googsName, item.price * item.count);
+                map.putIfAbsent(productName, sumByGoods);
             }
         }
-        return mapGoods;
+        return map;
     }
 
     public Map<LocalDate, Double> statisticsByDay() {
-        Map<LocalDate, Double> salesByDay = new TreeMap<>();
-        for (Order order : orderList) {
-            if (salesByDay.containsKey(LocalDate.from(order.datetime))) {
-                salesByDay.put(LocalDate.from(order.datetime), salesByDay.get(order.datetime) + order.sum);
-                continue;
+        Map<LocalDate, Double> map = new TreeMap<>();
+        for (Order order : setOfOrders) {
+            LocalDate localDate = LocalDate.from(order.datetime);
+            if (map.containsKey(localDate)) {
+                double sumByDay = map.get(localDate) + order.sum;
+                map.put(localDate, sumByDay);
             }
-            salesByDay.putIfAbsent(LocalDate.from(order.datetime), order.sum);
+            map.putIfAbsent(localDate, order.sum);
         }
-        return salesByDay;
+        return map;
     }
 
-//    public static void main(String[] args) {
-//        OrderProcessor op = new OrderProcessor("D:\\Progwards\\Academy\\Lessons\\src\\ru\\progwards\\java1\\lessons\\files\\Order");
-//        op.loadOrders(LocalDate.now(ZoneId.systemDefault()).minusMonths(1), LocalDate.now(ZoneId.systemDefault()).plusMonths(1), "S_01");
-//        for (Order order : op.orderList) {
-//            System.out.println(order.shopId + " " + order.datetime.toString() + " " + order.sum);
-//            for (OrderItem item : order.items) {
-//                System.out.println(item.googsName + " " + item.price + " " + item.count);
-//            }
-//        }
-//        Map map = op.statisticsByGoods();
-//        for (var entry : map.entrySet()) {
-//            System.out.println(entry.toString());
-//        }
-//    }
+    public void addToSetOfOrders(Path path, LocalDate start, LocalDate finish, String shopId) {
+        try {
+            String content = Files.readString(path);
+            boolean notContainsError = !content.contains("Error");
+            boolean isNotEmpty = !content.isEmpty();
+            LocalDate localDate = LocalDate.from(getLocalDateTime(Files.getLastModifiedTime(path)));
+            String fileName = path.getFileName().toString();
+            String shopIdFile = getSubString(fileName, 0, 3);
+            if (start == null && finish == null) {
+                if (shopId == null) {
+                    if (notContainsError && isNotEmpty)
+                        setOfOrders.add(createOrder(path));
+                    else {
+                        ++amountOfFilesWithErr;
+                        Files.writeString(path, "");
+                    }
+                } else if (shopIdFile.equals(shopId)) {
+                    if (notContainsError && isNotEmpty)
+                        setOfOrders.add(createOrder(path));
+                    else {
+                        ++amountOfFilesWithErr;
+                        Files.writeString(path, "");
+                    }
+                }
+            } else if (start == null) {
+                if (localDate.isBefore(finish) || localDate.equals(finish)) {
+                    if (shopId == null) {
+                        if (notContainsError && isNotEmpty)
+                            setOfOrders.add(createOrder(path));
+                        else {
+                            ++amountOfFilesWithErr;
+                            Files.writeString(path, "");
+                        }
+                    } else if (shopIdFile.equals(shopId)) {
+                        if (notContainsError && isNotEmpty)
+                            setOfOrders.add(createOrder(path));
+                        else {
+                            ++amountOfFilesWithErr;
+                            Files.writeString(path, "");
+                        }
+                    }
+                }
+            } else if (finish == null) {
+                if (localDate.isAfter(start) || localDate.equals(start)) {
+                    if (shopId == null) {
+                        if (notContainsError && isNotEmpty)
+                            setOfOrders.add(createOrder(path));
+                        else {
+                            ++amountOfFilesWithErr;
+                            Files.writeString(path, "");
+                        }
+                    } else if (shopIdFile.equals(shopId)) {
+                        if (notContainsError && isNotEmpty)
+                            setOfOrders.add(createOrder(path));
+                        else {
+                            ++amountOfFilesWithErr;
+                            Files.writeString(path, "");
+                        }
+                    }
+                }
+            } else if ((localDate.isAfter(start) && localDate.isBefore(finish)) ||
+                    localDate.equals(start) || localDate.equals(finish)) {
+                if (shopId == null) {
+                    if (notContainsError && isNotEmpty)
+                        setOfOrders.add(createOrder(path));
+                    else {
+                        ++amountOfFilesWithErr;
+                        Files.writeString(path, "");
+                    }
+                } else if (shopIdFile.equals(shopId)) {
+                    if (notContainsError && isNotEmpty)
+                        setOfOrders.add(createOrder(path));
+                    else {
+                        ++amountOfFilesWithErr;
+                        Files.writeString(path, "");
+                    }
+                }
+            }
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public Order createOrder(Path path) {
+        Order order = new Order();
+        try {
+            String fileName = path.getFileName().toString();
+            List<String> stringList = Files.readAllLines(path);
+            order.shopId = getSubString(fileName, 0, 3);
+            order.orderId = getSubString(fileName, 4, 10);
+            order.customerId = getSubString(fileName, 11, 15);
+            order.datetime = getLocalDateTime(Files.getLastModifiedTime(path));
+            order.items = generateListOrderItem(stringList);
+            order.sum = getSumBuy(generateListOrderItem(stringList));
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+        return order;
+    }
+
+    public boolean isValidNameFile(String str) {
+        return str.matches("[A-Z0-9]{3}-[A-Z0-9]{6}-[0-9]{4}[.][a-z]{3}");
+    }
+
+    public OrderItem generateOrderItem(String str) {
+        str = str.replace(", ", ",");
+        String[] strArr = str.split(",");
+        OrderItem orderItem = new OrderItem();
+        orderItem.googsName = strArr[0];
+        orderItem.count = Integer.parseInt(strArr[1]);
+        orderItem.price = Double.parseDouble(strArr[2]);
+        return orderItem;
+    }
+
+    public List<OrderItem> generateListOrderItem(List<String> list) {
+        List<OrderItem> orderItemList = new ArrayList<>();
+        for (int i = 0; i < list.size(); i++) {
+            orderItemList.add(generateOrderItem(list.get(i)));
+        }
+        Comparator<OrderItem> comparator = new Comparator<OrderItem>() {
+            @Override
+            public int compare(OrderItem o1, OrderItem o2) {
+                return o1.googsName.compareTo(o2.googsName);
+            }
+        };
+        orderItemList.sort(comparator);
+        return orderItemList;
+    }
+
+    public double getSumBuy(List<OrderItem> orderItemList) {
+        double result = 0;
+        for (int i = 0; i < orderItemList.size(); i++) {
+            int count = orderItemList.get(i).count;
+            double price = orderItemList.get(i).price;
+            result += count * price;
+        }
+        return result;
+    }
+
+    public String getSubString(String str, int fromInt, int toInt) {
+        return str.substring(fromInt, toInt);
+    }
+
+    public LocalDateTime getLocalDateTime(FileTime fileTime) {
+        Instant instant = Instant.ofEpochMilli(fileTime.toMillis());
+        LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+        return localDateTime;
+    }
+
+
 }
-
-
-
