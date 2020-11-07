@@ -34,7 +34,7 @@ public class OrderProcessor {
                     return FileVisitResult.CONTINUE;
                 }
             });
-        } catch (IOException e) {
+        } catch (IOException | NullPointerException e) {
             e.printStackTrace();
         }
         return failedFile;
@@ -121,15 +121,19 @@ public class OrderProcessor {
 
     public List<Order> process(String shopId) {
         List<Order> ordersToSort = new ArrayList<>();
-        for (Order order : orderList) {
-            if (shopId != null && order.shopId == shopId) {
+        try {
+            for (Order order : orderList) {
+                if (shopId != null && order.shopId == shopId) {
+                    ordersToSort.add(order);
+                    continue;
+                }
+                if (shopId != null && order.shopId != shopId) {
+                    continue;
+                }
                 ordersToSort.add(order);
-                continue;
             }
-            if (shopId != null && order.shopId != shopId) {
-                continue;
-            }
-            ordersToSort.add(order);
+        } catch (NullPointerException e) {
+            e.printStackTrace();
         }
         return sortOrders(ordersToSort);
     }

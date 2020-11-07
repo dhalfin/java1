@@ -22,8 +22,9 @@ public class Order {
         this.shopId = fileOrder.getFileName().toString().substring(0, 3);
         this.orderId = fileOrder.getFileName().toString().substring(5, 10);
         this.customerId = fileOrder.getFileName().toString().substring(12, 16);
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'");
-        this.datetime = LocalDateTime.from(dtf.parse(Files.getAttribute(fileOrder, "lastModifiedTime").toString()));
+//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'");
+        DateTimeFormatter formatter = DateTimeFormatter.ISO_INSTANT;
+        this.datetime = LocalDateTime.from(formatter.parse(Files.getAttribute(fileOrder, "lastModifiedTime").toString()));
         this.items = orderItemList;
         for (OrderItem item : items) {
             this.sum += item.count * item.price;
