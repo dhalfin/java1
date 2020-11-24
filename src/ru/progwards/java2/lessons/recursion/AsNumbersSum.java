@@ -6,7 +6,6 @@ public class AsNumbersSum {
     private static final String PLUS_ICON = "+";
 
     public static String asNumbersSum(int number) {
-
         return number + findCombination(number - 1, 1, "");
     }
 
