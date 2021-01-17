@@ -20,17 +20,17 @@ public class AsNumbersSum {
     }
 
     public static void main(String[] args) {
-        System.out.println(asNumbersSum(-1));
-        System.out.println(asNumbersSum(0));
-        System.out.println(asNumbersSum(1));
-        System.out.println(asNumbersSum(2));
-        System.out.println(asNumbersSum(3));
-        System.out.println(asNumbersSum(4));
-        System.out.println(asNumbersSum(5));
-        System.out.println(asNumbersSum(6));
+//        System.out.println(asNumbersSum(-1));
+//        System.out.println(asNumbersSum(0));
+//        System.out.println(asNumbersSum(1));
+//        System.out.println(asNumbersSum(2));
+//        System.out.println(asNumbersSum(3));
+//        System.out.println(asNumbersSum(4));
+//        System.out.println(asNumbersSum(5));
+//        System.out.println(asNumbersSum(6));
         System.out.println(asNumbersSum(7));
-        System.out.println(asNumbersSum(8));
-        System.out.println(asNumbersSum(9));
-        System.out.println(asNumbersSum(10));
+//        System.out.println(asNumbersSum(8));
+//        System.out.println(asNumbersSum(9));
+//        System.out.println(asNumbersSum(10));
     }
 }
