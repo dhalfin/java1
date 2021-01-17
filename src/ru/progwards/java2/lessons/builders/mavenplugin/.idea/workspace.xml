@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="0ab14296-af5d-4d6b-bb6b-1b5ab5059c9a" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/../../../../../../../Lessons1.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../../../../../Lessons.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../calculator/Calculator.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../calculator/pom.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../calculator/src/main/java/Calculator.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../calculator/src/main/java/Operation.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../calculator/src/test/java/CalculatorTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/HelpMojo.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/META-INF/maven/plugin.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/META-INF/maven/ru.progwards.java2.lessons.builders/mavenplugin/plugin-help.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/generated-sources/plugin/HelpMojo.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/maven-archiver/pom.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/maven-plugin-help.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/mavenplugin-1.0.2.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../recursion/AsNumbersSum.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../recursion/AsNumbersSum.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../../../../../../.." />
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHome" value="$APPLICATION_HOME_DIR$/plugins/maven/lib/maven3" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="ProjectId" id="1nC1Rxgv1TDHYadgMFWh52JSNuk" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="last_directory_selection" value="$PROJECT_DIR$/src/main/java" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../../../../../.." />
+    <property name="settings.editor.selected.configurable" value="reference.settings.project.maven.repository.indices" />
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="0ab14296-af5d-4d6b-bb6b-1b5ab5059c9a" name="Default Changelist" comment="" />
+      <created>1610879257219</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1610879257219</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="2921" y="412" key="FileChooserDialogImpl" timestamp="1610884543935">
+      <screen x="1920" y="0" width="1858" height="1080" />
+    </state>
+    <state x="2921" y="412" key="FileChooserDialogImpl/0.0.1858.1080/1920.0.1858.1080@1920.0.1858.1080" timestamp="1610884543935" />
+    <state x="2273" y="321" key="Maven.ArtifactSearchDialog" timestamp="1610884966812">
+      <screen x="1920" y="0" width="1858" height="1080" />
+    </state>
+    <state x="2273" y="321" key="Maven.ArtifactSearchDialog/0.0.1858.1080/1920.0.1858.1080@1920.0.1858.1080" timestamp="1610884966812" />
+    <state x="2708" y="195" key="SettingsEditor" timestamp="1610884621821">
+      <screen x="1920" y="0" width="1858" height="1080" />
+    </state>
+    <state x="2708" y="195" key="SettingsEditor/0.0.1858.1080/1920.0.1858.1080@1920.0.1858.1080" timestamp="1610884621821" />
+    <state x="3140" y="529" key="chooseDestDirectoryDialog" timestamp="1610885207122">
+      <screen x="1920" y="0" width="1858" height="1080" />
+    </state>
+    <state x="3140" y="529" key="chooseDestDirectoryDialog/0.0.1858.1080/1920.0.1858.1080@1920.0.1858.1080" timestamp="1610885207122" />
+  </component>
+</project>
