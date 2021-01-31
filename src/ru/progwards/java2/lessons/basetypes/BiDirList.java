@@ -1,147 +1,193 @@
 package ru.progwards.java2.lessons.basetypes;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 public class BiDirList<T> implements Iterable<T> {
 
-    public static class Node<T> {
-        T item;
-        Node preceding;
-        Node following;
-
-        Node(Node<T> preceding, T item, Node<T> following) {
-            this.item = item;
-            this.preceding = preceding;
-            this.following = following;
-        }
+    @Override
+    public Iterator<T> iterator() {
+        return getIterator();
     }
 
-    int size;
-    Node<T> firstNode;
-    Node<T> lastNode;
+    class ListItem<T> {
 
-    BiDirList() {
-        size = 0;
-        firstNode = null;
-        lastNode = null;
+        private T item;
+        private ListItem<T> following;
+        private ListItem<T> preceding;
+
+        ListItem(T item) {
+            this.item = item;
+        }
+
+        T getItem() {
+            return item;
+        }
+
+        void setFollowing(ListItem<T> item) {
+            following = item;
+        }
+
+        void setPreceding(ListItem<T> item) {
+            preceding = item;
+        }
+
+        ListItem<T> getFollowing() {
+            return following;
+        }
+
+        ListItem<T> getPreceding() {
+            return preceding;
+        }
+
+    }
+
+    private ListItem<T> head;
+    private ListItem<T> tail;
+    private int size;
+
+    ListItem<T> getHead() {
+        return head;
+    }
+
+    ListItem<T> getTail() {
+        return tail;
     }
 
     public void addLast(T item) {
-        Node<T> node = new Node(lastNode, item, null);
-        if (lastNode != null) {
-            lastNode.following = node;
+        ListItem<T> li = new ListItem<T>(item);
+        if (head == null) {
+            head = li;
         } else {
-            firstNode = node;
+            tail.setFollowing(li);
+            li.setPreceding(tail);
         }
-        lastNode = node;
+        tail = li;
         size++;
     }
 
     public void addFirst(T item) {
-        Node<T> node = new Node(null, item, firstNode);
-        if (firstNode != null) {
-            firstNode.preceding = node;
+        ListItem<T> li = new ListItem<T>(item);
+        if (head == null) {
+            head = li;
+            tail = li;
         } else {
-            lastNode = node;
+            head.setPreceding(li);
+            li.setFollowing(head);
+            head = li;
         }
-        firstNode = node;
         size++;
     }
 
     public void remove(T item) {
-        Node<T> node = firstNode;
-        while (node != null) {
-            if (node.item == item) {
-                if (node.preceding == null) {
-                    firstNode = node.following;
+        ListItem<T> current = getHead();
+        while (current != null) {
+            if (item.equals(current.getItem())) {
+                ListItem<T> prevItem = current.getPreceding();
+                if (prevItem != null) {
+                    prevItem.setFollowing(current.getFollowing());
                 } else {
-                    node.preceding.following = node.following;
+                    head = current.getFollowing();
                 }
-
-                if (node.following == null) {
-                    lastNode = node.preceding;
+                ListItem<T> nextItem = current.getFollowing();
+                if (nextItem != null) {
+                    nextItem.setPreceding(current.getPreceding());
                 } else {
-                    node.following.preceding = node.preceding;
+                    tail = current.getPreceding();
                 }
                 size--;
+                return;
             }
-            node = node.following;
+            current = current.getFollowing();
         }
+        throw new NoSuchElementException();
     }
 
     public T at(int i) {
-        if (i < 0 || i >= size) {
-            return null;
+        if (i >= size() || i < 0) {
+            throw new IndexOutOfBoundsException();
         }
-        int j = 0;
-        Node<T> node = firstNode;
-        while (node != null && j != i) {
-            node = node.following;
-            j++;
+        int counter = 0;
+        ListItem<T> current = getHead();
+        while (current != null) {
+            if (counter == i) {
+                return current.getItem();
+            }
+            current = current.getFollowing();
+            counter++;
         }
-        return node.item;
+        return null;
     }
 
-    public int size() {
+    public int size() { // получить количество элементов
         return size;
     }
 
     public static <T> BiDirList<T> from(T[] array) {
-        BiDirList<T> result = new BiDirList<T>();
-        for (T item : array) {
-            result.addLast(item);
-        }
-        return result;
-    }
-
-    public static <T> BiDirList<T> of(T... array) {
-        BiDirList<T> list = new BiDirList<T>();
-        for (T item : array) {
-            list.addLast(item);
+        BiDirList<T> list = new BiDirList<>();
+        for (T elem : array) {
+            list.addLast(elem);
         }
         return list;
     }
 
-    public T[] toArray() {
-        T[] array = (T[]) new Object[size];
-        int i = 0;
-        Node<T> node = firstNode;
-        while (node != null) {
-            array[i++] = node.item;
-            node = node.following;
+    public static <T> BiDirList<T> of(T... array) { //  конструктор из массива
+        return BiDirList.from(array);
+    }
+
+    public T[] toArray(T[] array) {
+        int sizeOfList = size();
+        if (array.length < sizeOfList) {
+            array = (T[]) new Object[sizeOfList];
+        }
+        ListItem<T> elem = getHead();
+        for (int i = 0; i < array.length; i++) {
+            if (i > sizeOfList) {
+                array[i] = null;
+            } else {
+                array[i] = elem.getItem();
+                elem = elem.getFollowing();
+            }
         }
         return array;
     }
 
     public Iterator<T> getIterator() {
-        return new ForwardIterator();
-    }
+        return new Iterator<T>() {
+            private ListItem<T> currentListItem = getHead();
+            private int index = 0;
 
-    public Iterator<T> iterator() {
-        return new ForwardIterator();
-    }
+            @Override
+            public boolean hasNext() {
+                return index < size();
+            }
 
-    private class ForwardIterator implements Iterator<T> {
-        private Node<T> lastReturned;
-
-        ForwardIterator() {
-            lastReturned = null;
-        }
-
-        public boolean hasNext() {
-            return lastReturned == null || lastReturned.following != null;
-        }
-
-        public T next() {
-            lastReturned = lastReturned == null ? firstNode : lastReturned.following;
-            return lastReturned.item;
-        }
+            @Override
+            public T next() {
+                if (!hasNext()) throw new NoSuchElementException();
+                ListItem<T> listItemToReturn = currentListItem;
+                currentListItem = currentListItem.getFollowing();
+                index++;
+                return listItemToReturn.getItem();
+            }
+        };
     }
 
     public static void main(String[] args) {
-        BiDirList<Integer> l = BiDirList.of(3, 1, 4, 6);
-        for (Integer i : l) {
+
+        BiDirList<Integer> list = new BiDirList<>();
+        for (int i = 0; i < 15; i++) {
+            list.addLast(i);
+        }
+
+        for (Integer i : list) {
             System.out.println(i);
+        }
+        System.out.println();
+        list.remove(list.getHead().getItem());
+        Iterator<Integer> iterator = list.iterator();
+        while (iterator.hasNext()) {
+            System.out.println(iterator.next());
         }
     }
 }

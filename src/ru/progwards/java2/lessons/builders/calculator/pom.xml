@@ -85,11 +85,11 @@
                 <artifactId>mavenplugin</artifactId>
                 <version>1.0.2</version>
                 <configuration>
-                    <emailTo>subscriber@gmail.com</emailTo>
-                    <emailFrom>dinar.khalfin@gmail.com</emailFrom>
-                    <authServ>smtp.google.com</authServ>
-                    <authUser>dinar.khalfin@gmail.com</authUser>
-                    <authPass>*******</authPass>
+<!--                    <emailTo>subscriber@gmail.com</emailTo>-->
+<!--                    <emailFrom>dinar.khalfin@gmail.com</emailFrom>-->
+<!--                    <authServ>smtp.google.com</authServ>-->
+<!--                    <authUser>dinar.khalfin@gmail.com</authUser>-->
+<!--                    <authPass>*******</authPass>-->
                 </configuration>
                 <executions>
                     <execution>

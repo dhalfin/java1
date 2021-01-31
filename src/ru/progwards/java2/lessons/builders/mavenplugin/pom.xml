@@ -9,8 +9,9 @@
     <version>1.0.2</version>
     <packaging>maven-plugin</packaging>
 
-    <name>maven-plugin mailing JAR by email</name>
+    <name>mavenplugin Send JAR by email</name>
 
+    <!-- FIXME change it to the project's website -->
     <url>http://www.example.com</url>
 
     <prerequisites>
@@ -183,7 +184,6 @@
             </build>
         </profile>
     </profiles>
-
 
 
 </project>
