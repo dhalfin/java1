@@ -135,22 +135,30 @@ public class BiDirList<T> implements Iterable<T> {
         return BiDirList.from(array);
     }
 
-    public T[] toArray(T[] array) {
-        int sizeOfList = size();
-        if (array.length < sizeOfList) {
-            array = (T[]) new Object[sizeOfList];
+    public void toArray(T[] array) {
+        ListItem<T> temp = head;
+        int i = 0;
+        while (temp != null) {
+            array[i] = temp.item;
         }
-        ListItem<T> elem = getHead();
-        for (int i = 0; i < array.length; i++) {
-            if (i > sizeOfList) {
-                array[i] = null;
-            } else {
-                array[i] = elem.getItem();
-                elem = elem.getFollowing();
-            }
-        }
-        return array;
     }
+
+//    public T[] toArray(T[] array) {
+//        int sizeOfList = size();
+//        if (array.length < sizeOfList) {
+//            array = (T[]) new Object[sizeOfList];
+//        }
+//        ListItem<T> elem = getHead();
+//        for (int i = 0; i < array.length; i++) {
+//            if (i > sizeOfList) {
+//                array[i] = null;
+//            } else {
+//                array[i] = elem.getItem();
+//                elem = elem.getFollowing();
+//            }
+//        }
+//        return array;
+//    }
 
     public Iterator<T> getIterator() {
         return new Iterator<T>() {

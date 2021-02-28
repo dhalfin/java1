@@ -11,7 +11,7 @@ public class UsageFrequency {
         try (FileReader reader = new FileReader(fileName)) {
             StringBuilder sb = new StringBuilder();
             while (reader.ready()) {
-                sb.append((char)reader.read());
+                sb.append((char) reader.read());
             }
             file = sb.toString();
         } catch (IOException e) {

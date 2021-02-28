@@ -5,12 +5,12 @@ import java.util.NoSuchElementException;
 
 public class DoubleHashTable<K extends HashValue, V> implements Iterable<TableItem<K, V>> {
 
-    private Object[] table;
+    private TableItem[] table;
     private int size;
     private final int STAGE_VALUE = 10;
 
     DoubleHashTable() {
-        table = new Object[101];
+        table = new TableItem[101];
         size = 0;
     }
 
@@ -58,10 +58,10 @@ public class DoubleHashTable<K extends HashValue, V> implements Iterable<TableIt
     }
 
     private void extendTable() throws Exception {
-        Object[] oldTable = table;
-        table = new Object[PrimeNumber.getNearestPrime(table.length * 2)];
+        TableItem[] oldTable = table;
+        table = new TableItem[PrimeNumber.getNearestPrime(table.length * 2)];
         size = 0;
-        for (Object o : oldTable) {
+        for (TableItem o : oldTable) {
             if (o != null && !((TableItem<K, V>) o).isRemoved) {
                 TableItem<K, V> item = (TableItem<K, V>) o;
                 innerAdd(item);
@@ -71,7 +71,7 @@ public class DoubleHashTable<K extends HashValue, V> implements Iterable<TableIt
 
     public V get(K key) {
         int index = getHash(key.getHash());
-        int step = getHashForStage(key.getHash());
+        int stage = getHashForStage(key.getHash());
         int startIndex = index;
         do {
             if (index >= table.length)
@@ -87,14 +87,14 @@ public class DoubleHashTable<K extends HashValue, V> implements Iterable<TableIt
                     }
                 }
             }
-            index += step;
+            index += stage;
         } while (index != startIndex);
         return null;
     }
 
     public void remove(K key) {
         int index = getHash(key.getHash());
-        int step = getHashForStage(key.getHash());
+        int stage = getHashForStage(key.getHash());
         int startIndex = index;
         do {
             if (index >= table.length)
@@ -103,16 +103,14 @@ public class DoubleHashTable<K extends HashValue, V> implements Iterable<TableIt
                 return;
             } else {
                 if (key.equals(((TableItem<K, V>) table[index]).getKey())) {
-                    if (((TableItem<K, V>) table[index]).isRemoved) {
-                        return;
-                    } else {
+                    if (!((TableItem<K, V>) table[index]).isRemoved) {
                         ((TableItem<K, V>) table[index]).isRemoved = true;
                         size--;
-                        return;
                     }
+                    return;
                 }
             }
-            index += step;
+            index += stage;
         } while (index != startIndex);
     }
 
